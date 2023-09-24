@@ -9,4 +9,4 @@ def send_matan_schedule():
 
     if today.weekday() == 2 or (today.weekday() == 4 and not is_even_week) and week_num <= 13:
         send_message(f"{choice('👏🌞🌻🌼')} Доброе утро, лисята" + ", сегодня МАТАН" +
-                     f" {choice('😍🥰😘')}, и сегодня моет доску - {STUDENT_LIST[week_num]}")
+                     f" {choice('😍🥰😘')}, и сегодня моет доску - {STUDENT_LIST[week_num][0]} {STUDENT_LIST[week_num][1]} {STUDENT_LIST[week_num][2]}")
