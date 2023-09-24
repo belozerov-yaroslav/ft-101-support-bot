@@ -3,7 +3,7 @@ import datetime
 import matan_schedule
 
 def handler(event, context):
-    if 'httpMethod' in event.keys():
+    if 'httpMethod' in event.keys() and len(event['queryStringParameters']) == 3:
         parametrs = event['queryStringParameters']
         matan_schedule.send_matan_schedule(datetime.datetime(day=int(parametrs['day']),
                                                              month=int(parametrs['month']),
