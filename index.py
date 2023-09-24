@@ -1,8 +1,10 @@
 import requests
 import datetime
 import matan_schedule
+import echo_mode
 
 def handler(event, context):
+    echo_mode.echo() # просто отправляет в тг сообщение, что бот жив
     if 'httpMethod' in event.keys() and len(event['queryStringParameters']) == 3:
         parametrs = event['queryStringParameters']
         matan_schedule.send_matan_schedule(datetime.datetime(day=int(parametrs['day']),
