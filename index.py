@@ -6,19 +6,16 @@ from checkBirthday import checkBirthday
 from lists import asia_ekat
 
 def handler(event, context):
+    today = datetime.datetime.now(tz=asia_ekat)
     echo_mode.echo() # просто отправляет в тг сообщение, что бот жив
     if 'httpMethod' in event.keys() and len(event['queryStringParameters']) == 3:
         parametrs = event['queryStringParameters']
-        send_matan_schedule(datetime.datetime(day=int(parametrs['day']),
-                                                             month=int(parametrs['month']),
-                                                             year=int(parametrs['year']),
-                                                             tzinfo=asia_ekat))
-        return {
-            'statusCode': 200,
-            'body': 'Testing ok!',
-        }
-    send_matan_schedule()
-    checkBirthday()
+        today = datetime.datetime(day=int(parametrs['day']),
+                                  month=int(parametrs['month']),
+                                  year=int(parametrs['year']),
+                                  tzinfo=asia_ekat)
+    send_matan_schedule(today)
+    checkBirthday(today)
     return {
         'statusCode': 200,
         'body': 'ok!',

@@ -1,9 +1,9 @@
 from random import choice
 from tg_module import send_message
-from lists import BIRTHDAY_LIST, STUDENT_LIST, today
+from lists import BIRTHDAY_LIST, STUDENT_LIST
 
 
-def checkBirthday():
+def checkBirthday(today):
     yearOfBirthdayBoys = []
     surnameNameID = []
 
