@@ -24,7 +24,8 @@ def get_schedule(today):
         with open('schedules/schedule.csv', newline='', encoding='utf-8') as schedule:
             if today_weekday < 5:
                 schedule_reader = [row for row in csv.reader(schedule, delimiter=',')]
-                output_schedule = []
+                output_schedule_first = [["", "1 подгруппа"]]
+                output_schedule_second = [["", "2 подгруппа"]]
 
                 for row_index in range(2 + today_weekday * 12, 14 + today_weekday * 12, 2):
                     lesson_number = schedule_reader[row_index][1]
@@ -40,9 +41,13 @@ def get_schedule(today):
                     row[1] = row[1].replace('\n', ' ')
                     if not row[1]: row[1] = '-'
 
-                    output_schedule.append([lesson_number, row[0], row[1]])
+                    output_schedule_first.append([lesson_number, row[0]])
+                    output_schedule_first.append([])
 
-                return tabulate(output_schedule)
+                    output_schedule_second.append([lesson_number, row[1]])
+                    output_schedule_second.append([])
+
+                return [tabulate(output_schedule_first, headers="firstrow", tablefmt="plain"), tabulate(output_schedule_second, headers="firstrow", tablefmt="plain")]
 
             return ""
 
@@ -54,4 +59,6 @@ def send_schedule(today):
     schedule_message = get_schedule(today)
 
     if schedule_message:
-        send_message(schedule_message)
+        send_message("Расписание на сегодня:")
+        send_message(f'`{schedule_message[0]}`')
+        send_message(f'`{schedule_message[1]}`')
