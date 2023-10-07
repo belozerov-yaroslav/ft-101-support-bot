@@ -9,7 +9,7 @@ import os.path
 
 
 def get_schedule_from_url():
-    with open("tokens.json", "r") as tokens:
+    with open("tokens.json", "r", encoding="utf8") as tokens:
         url = json.load(tokens)["schedule_url"]
         open("schedules/schedule.csv", "wb").write(requests.get(url).content)
 
@@ -60,5 +60,5 @@ def send_schedule(today):
 
     if schedule_message:
         send_message("Расписание на сегодня:")
-        send_message(f'`{schedule_message[0]}`')
-        send_message(f'`{schedule_message[1]}`')
+        send_message(f'`{schedule_message[0]}`', turn_on_markdown=True)
+        send_message(f'`{schedule_message[1]}`', turn_on_markdown=True)
