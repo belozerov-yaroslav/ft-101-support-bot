@@ -31,7 +31,7 @@ def get_schedule(today):
                     lesson_number = schedule_reader[row_index][1]
 
                     # [2:4] - только для 1 группы
-                    row = schedule_reader[row_index + is_even_week][2:4]
+                    row = schedule_reader[row_index - 1 + is_even_week][2:4]
 
                     row[0] = row[0].replace('\n', ' ')
                     if not row[0]: row[0] = '-'

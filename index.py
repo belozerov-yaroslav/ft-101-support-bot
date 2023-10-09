@@ -1,4 +1,5 @@
 import os
+import traceback
 
 import requests
 import datetime
@@ -23,18 +24,9 @@ def handler(event, context):
 
 def scheduled_launch(today=datetime.datetime.now(tz=asia_ekat)):
     echo_mode.echo()
-    try:
-        send_matan_schedule(today)
-    except:
-        pass
-    try:
-        checkBirthday(today)
-    except:
-        pass
-    try:
-        send_schedule(today)
-    except:
-        pass
+    send_matan_schedule(today)
+    checkBirthday(today)
+    send_schedule(today)
     return {
         'statusCode': 200,
         'body': 'ok!',
@@ -42,8 +34,7 @@ def scheduled_launch(today=datetime.datetime.now(tz=asia_ekat)):
 
 
 def http_triggered(http_data):
-    if len(http_data['queryStringParameters']) == 3 and \
-            http_data['queryStringParameters'].keys == ['day', 'month', 'year']:
+    if len(http_data['queryStringParameters']) == 3:
         parameters = http_data['queryStringParameters']
         today = datetime.datetime(day=int(parameters['day']),
                                   month=int(parameters['month']),
