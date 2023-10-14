@@ -10,12 +10,6 @@ from help_functions import asia_ekat, is_even_week
 from ScheduleLoadres import XlsxScheduleLoader
 
 
-def get_schedule_from_url():
-    with open("tokens.json", "r", encoding="utf8") as tokens:
-        url = json.load(tokens)["schedule_url"]
-        open("schedules/schedule.csv", "wb").write(requests.get(url).content)
-
-
 def get_pair_name_aud(pair_string):
     pair_string = pair_string.split('\n')[0]
     pair_name = pair_string.split(",")[0]
@@ -66,9 +60,6 @@ def get_schedule(today):
 
 
 def send_schedule(today):
-    if (today.weekday() == 6) or (not os.path.exists("schedules/schedule.csv")):
-        get_schedule_from_url()
-
     schedule_message = get_schedule(today)
 
     if schedule_message:
