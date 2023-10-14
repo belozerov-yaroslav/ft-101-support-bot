@@ -7,8 +7,8 @@ class ScheduleLoader:
     @abc.abstractmethod
     def load(self):
         """Возвращает список из двух списков (две подгруппы), в каждом списке
-        7 списков (7 дней недели), в кажом из семи по списку на два элемента
-        (чётная и нечётная пара)"""
+        2 списка (чётная и нечётная неделя), в каждом из двух по 7 списков
+        (7 дней недели)"""
         pass
 
 
@@ -25,7 +25,7 @@ class XlsxScheduleLoader(ScheduleLoader):
         return list(filter(lambda x: merged_cell.coordinate in x, merged_ranges))[0].start_cell
 
     def load_schedule_for_group(self, cells, merged_cells):
-        result_list = [[[[] for _ in range(2)] for _ in range(self.MAX_PAIRS_IN_DAY)] for _ in range(7)]
+        result_list = [[[None for _ in range(self.MAX_PAIRS_IN_DAY)] for _ in range(7)] for _ in range(2)]
         for index in range(0, len(cells)):
             cell = cells[index]
             if isinstance(cell, MergedCell):
@@ -34,8 +34,11 @@ class XlsxScheduleLoader(ScheduleLoader):
                 day_num = index // (self.MAX_PAIRS_IN_DAY * 2)
                 pair_num = ((index % (self.MAX_PAIRS_IN_DAY * 2)) // 2) % self.MAX_PAIRS_IN_DAY
                 even_pair = index % 2
-                result_list[day_num][pair_num][even_pair] = cell.value
+                result_list[even_pair][day_num][pair_num] = cell.value
         return result_list
+
+    def load_pair_schedule(self):
+        return list(map(lambda a: a[0].value, self.worksheet["B3:B14"][0::2]))
 
     def load(self):
         f_group, s_group = [], []
@@ -44,3 +47,7 @@ class XlsxScheduleLoader(ScheduleLoader):
         s_group += self.load_schedule_for_group(list(map(lambda x: x[0], self.worksheet[self.SECOND_GROUP_INDEX])),
                                                 self.worksheet.merged_cells.ranges)
         return [f_group, s_group]
+
+
+if __name__ == '__main__':
+    print(XlsxScheduleLoader("schedules/schedule.xlsx", "ФИИТ-1").load())

@@ -6,6 +6,8 @@ import json
 from tabulate import tabulate
 from tg_module import send_message
 import os.path
+from help_functions import asia_ekat, is_even_week
+from ScheduleLoadres import XlsxScheduleLoader
 
 
 def get_schedule_from_url():
@@ -14,42 +16,53 @@ def get_schedule_from_url():
         open("schedules/schedule.csv", "wb").write(requests.get(url).content)
 
 
+def get_pair_name_aud(pair_string):
+    pair_string = pair_string.split('\n')[0]
+    pair_name = pair_string.split(",")[0]
+    try:
+        pair_aud = pair_string.split(",")[1]
+    except Exception:
+        pair_aud = "-"
+    if pair_name == "Математический анализ":
+        pair_name = "Матан(Л)"
+    elif pair_name == "Алгебра и геометрия":
+        pair_name = "Алгем(Л)"
+    elif pair_name == "Иностранный язык":
+        pair_name = "Ин. яз."
+    elif pair_name.startswith("Физкультура"):
+        pair_name = "Физра " + pair_name.split()[1]
+    elif pair_name.startswith("Основы российской"):
+        pair_name = "ОРГ"
+    elif pair_name == "ОПД":
+        pair_aud = "-"
+    return pair_aud, pair_name
+
+
+def construct_schedule_message(pair_schedule, pairs, title):
+    output_strings = [["", title.split()[0], title.split()[1]]]
+    for i in range(len(pairs)):
+        if all(map(lambda a: a is None, pairs[i:])):
+            break
+        if pairs[i] is None:
+            output_strings.append([pair_schedule[i], "-"])
+            output_strings.append([])
+        else:
+            output_strings.append([pair_schedule[i], *get_pair_name_aud(pairs[i])])
+            output_strings.append([])
+    return tabulate(output_strings, headers="firstrow", tablefmt="plain")
+
+
 def get_schedule(today):
-    with open("tokens.json", "r", encoding="utf8") as tokens:
-        tokens_loaded = json.load(tokens)
-        timezone = datetime.timezone(datetime.timedelta(hours=int(tokens_loaded["timezone_delta"])))
-        today_weekday = today.weekday()
-        is_even_week = ((dt.now(tz=timezone) - dt(year=2023, month=9, day=4, tzinfo=timezone)).days // 7 + 1) % 2 == 0
-
-        with open('schedules/schedule.csv', newline='', encoding='utf-8') as schedule:
-            if today_weekday < 5:
-                schedule_reader = [row for row in csv.reader(schedule, delimiter=',')]
-                output_schedule_first = [["", "1 подгруппа"]]
-                output_schedule_second = [["", "2 подгруппа"]]
-
-                for row_index in range(2 + today_weekday * 12, 14 + today_weekday * 12, 2):
-                    lesson_number = schedule_reader[row_index][1]
-
-                    # [2:4] - только для 1 группы
-                    row = schedule_reader[row_index - 1 + is_even_week][2:4]
-
-                    row[0] = row[0].replace('\n', ' ')
-                    if not row[0]: row[0] = '-'
-                    if row[0] in tokens_loaded["repeating_lessons"]:
-                        row[1] = row[0]
-
-                    row[1] = row[1].replace('\n', ' ')
-                    if not row[1]: row[1] = '-'
-
-                    output_schedule_first.append([lesson_number, row[0]])
-                    output_schedule_first.append([])
-
-                    output_schedule_second.append([lesson_number, row[1]])
-                    output_schedule_second.append([])
-
-                return [tabulate(output_schedule_first, headers="firstrow", tablefmt="plain"), tabulate(output_schedule_second, headers="firstrow", tablefmt="plain")]
-
-            return ""
+    weekday = today.weekday()
+    schedule_loader = XlsxScheduleLoader("schedules/schedule.xlsx", "ФИИТ-1")
+    all_pairs = schedule_loader.load()
+    first_subgroup_pairs = all_pairs[0][is_even_week(today)][weekday]
+    second_subgroup_pairs = all_pairs[1][is_even_week(today)][weekday]
+    if all(map(lambda a: a is None, first_subgroup_pairs + second_subgroup_pairs)):
+        return None
+    f_mes = construct_schedule_message(schedule_loader.load_pair_schedule(), first_subgroup_pairs, "1 подгруппа")
+    s_mes = construct_schedule_message(schedule_loader.load_pair_schedule(), second_subgroup_pairs, "2 подгруппа")
+    return [f_mes, s_mes]
 
 
 def send_schedule(today):

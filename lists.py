@@ -2,9 +2,6 @@ import datetime
 from datetime import timedelta
 from datetime import datetime as dt
 
-# везде используем today, чтобы для тестирования просто менять today, а не крутить дату в системе
-asia_ekat = datetime.timezone(timedelta(hours=5))
-today = dt.now(tz=asia_ekat)
 
 STUDENT_LIST = []
 BIRTHDAY_LIST = []
