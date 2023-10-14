@@ -1,25 +1,19 @@
 import os
-import traceback
-
-import requests
 import datetime
 from matan_schedule import send_matan_schedule
 import echo_mode
 from checkBirthday import checkBirthday
-from lists import asia_ekat
 from get_schedule import send_schedule
 from tg_module import send_message
 import json
 import bot_commands
+from help_functions import asia_ekat
 
 
 def handler(event, context):
-    try:
-        if 'event_metadata' in event.keys():
-            return scheduled_launch()
-        return http_triggered(event)
-    except Exception as e:
-        send_message(str(e), os.environ.get("ECHO_CHAT_ID"))
+    if 'event_metadata' in event.keys():
+        return scheduled_launch()
+    return http_triggered(event)
 
 
 def scheduled_launch(today=datetime.datetime.now(tz=asia_ekat)):
