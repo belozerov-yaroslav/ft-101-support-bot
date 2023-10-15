@@ -1,13 +1,10 @@
-import requests
-import datetime
-from datetime import datetime as dt
-import csv
-import json
+import os
+
 from tabulate import tabulate
-from tg_module import send_message
-import os.path
+from tg_module import send_message, pin_message, unpin_message
 from help_functions import asia_ekat, is_even_week
 from ScheduleLoadres import XlsxScheduleLoader
+from ObjectStorageWorker import ObjectStorageWorker
 
 
 def get_pair_name_aud(pair_string):
@@ -61,8 +58,16 @@ def get_schedule(today):
 
 def send_schedule(today):
     schedule_message = get_schedule(today)
+    try:
+        pinned_msg_id = ObjectStorageWorker(os.environ.get("OBJECT_STORAGE_BUCKET")).get_object_text("pinned_tg_msg")
+        unpin_message(pinned_msg_id)
+    except Exception:
+        pass
+
 
     if schedule_message:
-        send_message("Расписание на сегодня:")
+        msg_id = send_message("Расписание на сегодня:")
+        ObjectStorageWorker(os.environ.get("OBJECT_STORAGE_BUCKET")).load_object_text("pinned_tg_msg", str(msg_id))
         send_message(f'`{schedule_message[0]}`', turn_on_markdown=True)
         send_message(f'`{schedule_message[1]}`', turn_on_markdown=True)
+        pin_message(str(msg_id))
