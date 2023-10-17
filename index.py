@@ -7,13 +7,17 @@ from get_schedule import send_schedule
 from tg_module import send_message
 import json
 import bot_commands
+import logging
 from help_functions import asia_ekat
 
 
 def handler(event, context):
-    if 'event_metadata' in event.keys():
-        return scheduled_launch()
-    return http_triggered(event)
+    try:
+        if 'event_metadata' in event.keys():
+            return scheduled_launch()
+        return http_triggered(event)
+    except Exception as e:
+        logging.error('Error at %s', exc_info=e)
 
 
 def scheduled_launch(today=datetime.datetime.now(tz=asia_ekat)):
