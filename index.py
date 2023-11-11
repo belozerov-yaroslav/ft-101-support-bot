@@ -23,6 +23,8 @@ def handler(event, context):
 def triggered_launch(event):
     if event["details"]["trigger_id"] == os.environ.get("ANEK_TRIGGER_ID"):
         return AnekdotSender.send_anekdot()
+    if event["details"]["trigger_id"] == os.environ.get("SCHEDULE_TRIGGER_ID"):
+        return send_schedule(datetime.datetime.now(tz=asia_ekat))
     return scheduled_launch()
 
 
@@ -30,7 +32,6 @@ def scheduled_launch(today=datetime.datetime.now(tz=asia_ekat)):
     echo_mode.echo()
     send_matan_schedule(today)
     checkBirthday(today)
-    send_schedule(today)
     return {
         'statusCode': 200,
         'body': 'ok!',

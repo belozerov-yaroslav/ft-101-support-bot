@@ -64,10 +64,10 @@ def send_schedule(today):
     except Exception:
         pass
 
-
     if schedule_message:
         msg_id = send_message("Расписание на сегодня:")
-        ObjectStorageWorker(os.environ.get("OBJECT_STORAGE_BUCKET")).load_object_text(os.environ.get("PINNED_TG_MSG_KEY"), str(msg_id))
+        ObjectStorageWorker(os.environ.get("OBJECT_STORAGE_BUCKET")).load_object_text(
+            os.environ.get("PINNED_TG_MSG_KEY"), str(msg_id))
         send_message(f'`{schedule_message[0]}`', turn_on_markdown=True)
         send_message(f'`{schedule_message[1]}`', turn_on_markdown=True)
         pin_message(str(msg_id))
