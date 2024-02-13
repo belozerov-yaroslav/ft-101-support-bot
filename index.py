@@ -49,7 +49,7 @@ def http_triggered(http_data):
         return scheduled_launch(today)
     http_body = json.loads(http_data['body'])
     if 'message' in http_body:
-        if http_body['message']['entities'][0]['type'] == 'bot_command':
+        if 'entities' in http_body['message'].keys() and http_body['message']['entities'][0]['type'] == 'bot_command':
             try_load_command(http_body['message'])
     return {
         'statusCode': 200,
