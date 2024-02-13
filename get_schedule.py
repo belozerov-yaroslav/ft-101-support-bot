@@ -7,8 +7,8 @@ from ScheduleLoadres import XlsxScheduleLoader
 from ObjectStorageWorker import ObjectStorageWorker
 
 
-def get_pair_name_aud(pair_string):
-    pair_string = pair_string.split('\n')[0]
+def get_pair_name_aud(pair_string : str):
+    pair_string = pair_string.replace("\n", ", ")
     pair_name = pair_string.split(",")[0]
     try:
         pair_aud = pair_string.split(",")[1]
@@ -17,15 +17,19 @@ def get_pair_name_aud(pair_string):
     if pair_name == "Математический анализ":
         pair_name = "Матан(Л)"
     elif pair_name == "Алгебра и геометрия":
-        pair_name = "Алгем(Л)"
+        if pair_string.find("обуч") == -1:
+            pair_name = "Алгем(Л)"
+        else:
+            pair_name = "Алгем(У)"
     elif pair_name == "Иностранный язык":
         pair_name = "Ин. яз."
     elif pair_name.startswith("Физкультура"):
-        pair_name = "Физра " + pair_name.split()[1]
+        pair_name = "Физра " + pair_name.split()[2]
     elif pair_name.startswith("Основы российской"):
         pair_name = "ОРГ"
-    elif pair_name == "ОПД":
+    elif pair_name == "Основы продуктового дизайна":
         pair_aud = "-"
+        pair_name = "Дизайн"
     return pair_aud, pair_name
 
 
