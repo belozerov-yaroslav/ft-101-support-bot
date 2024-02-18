@@ -15,6 +15,10 @@ def handler(event, context):
     try:
         if 'event_metadata' in event.keys():
             triggered_launch(event)
+            return {
+                'statusCode': 200,
+                'body': 'ok!',
+            }
         return http_triggered(event)
     except Exception as e:
         logging.error('Error at %s', exc_info=e)
