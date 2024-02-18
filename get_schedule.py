@@ -23,6 +23,8 @@ def get_pair_name_aud(pair_string : str):
             pair_name = "Алгем(У)"
     elif pair_name == "Иностранный язык":
         pair_name = "Ин. яз."
+    elif pair_name == "Язык  Python":
+        pair_name = "Python"
     elif pair_name.startswith("Физкультура"):
         pair_name = "Физра " + pair_name.split()[2]
     elif pair_name.startswith("Основы российской"):
