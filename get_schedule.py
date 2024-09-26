@@ -51,7 +51,7 @@ def construct_schedule_message(pair_schedule, pairs, title):
 
 def get_schedule(today):
     weekday = today.weekday()
-    schedule_loader = XlsxScheduleLoader("schedules/schedule.xlsx", "ФИИТ-1")
+    schedule_loader = XlsxScheduleLoader("schedules/schedule.xlsx", "ФИИТ-2")
     all_pairs = schedule_loader.load()
     first_subgroup_pairs = all_pairs[0][is_even_week(today)][weekday]
     second_subgroup_pairs = all_pairs[1][is_even_week(today)][weekday]

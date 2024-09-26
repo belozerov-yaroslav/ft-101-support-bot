@@ -13,9 +13,9 @@ class ScheduleLoader:
 
 
 class XlsxScheduleLoader(ScheduleLoader):
-    MAX_PAIRS_IN_DAY = 6
-    FIRST_GROUP_INDEX = "C3:C72"
-    SECOND_GROUP_INDEX = "D3:D72"
+    MAX_PAIRS_IN_DAY = 7
+    FIRST_GROUP_INDEX = "C3:C86"
+    SECOND_GROUP_INDEX = "D3:D86"
 
     def __init__(self, file_path, sheet_name):
         self.workbook = load_workbook(filename=file_path)
@@ -50,4 +50,4 @@ class XlsxScheduleLoader(ScheduleLoader):
 
 
 if __name__ == '__main__':
-    print(XlsxScheduleLoader("schedules/schedule.xlsx", "ФИИТ-1").load())
+    print(XlsxScheduleLoader("schedules/schedule.xlsx", "ФИИТ-2").load())
