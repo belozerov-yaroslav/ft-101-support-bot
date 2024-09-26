@@ -36,7 +36,12 @@ def get_pair_name_aud(pair_string : str):
 
 
 def construct_schedule_message(pair_schedule, pairs, title):
-    output_strings = [["", title.split()[0], title.split()[1]]]
+    output_strings = []
+    if title:
+        output_strings.append(["", title.split()[0], title.split()[1]])
+    else:
+        output_strings.append(["Общее", "", "расписание"])
+
     for i in range(len(pairs)):
         if all(map(lambda a: a is None, pairs[i:])):
             break
@@ -57,6 +62,8 @@ def get_schedule(today):
     second_subgroup_pairs = all_pairs[1][is_even_week(today)][weekday]
     if all(map(lambda a: a is None, first_subgroup_pairs + second_subgroup_pairs)):
         return None
+    if first_subgroup_pairs == second_subgroup_pairs:
+        return [construct_schedule_message(schedule_loader.load_pair_schedule(), first_subgroup_pairs, "")]
     f_mes = construct_schedule_message(schedule_loader.load_pair_schedule(), first_subgroup_pairs, "1 подгруппа")
     s_mes = construct_schedule_message(schedule_loader.load_pair_schedule(), second_subgroup_pairs, "2 подгруппа")
     return [f_mes, s_mes]
@@ -74,6 +81,6 @@ def send_schedule(today):
         msg_id = send_message("Расписание на сегодня:")
         ObjectStorageWorker(os.environ.get("OBJECT_STORAGE_BUCKET")).load_object_text(
             os.environ.get("PINNED_TG_MSG_KEY"), str(msg_id))
-        send_message(f'`{schedule_message[0]}`', turn_on_markdown=True)
-        send_message(f'`{schedule_message[1]}`', turn_on_markdown=True)
+        for i in range(len(schedule_message)):
+            send_message(f'`{schedule_message[i]}`', turn_on_markdown=True)
         pin_message(str(msg_id))
